@@ -3,7 +3,7 @@ function [] = ilues1()
 Parallel_Computing = 0; % 0 for serial computing, 1 for parallel computing
 if Parallel_Computing == 1
     Ncpu = 6;
-    myCluster = parcluster('local'); % reset the maximum number of workers (i.e., cores)
+    myCluster = parcluster('local'); 
     myCluster.NumWorkers = Ncpu;
     saveProfile(myCluster);
     N = maxNumCompThreads;
@@ -13,16 +13,16 @@ if Parallel_Computing == 1
 end
 
 load Par.mat  % load the parameter settings used in ILUES
-datax = load('xf.mat');%待更新参数(z_Ne和ss_Ne)
+datax = load('xf.mat');
 xf = datax.xf;
-datay = load('yf.mat');%观测值
+datay = load('yf.mat');
 yf = datay.yf;
 
 
 
 obs = Par.obs;
-Nobs = Par.Nobs;     % number of the measurements
-Ne = Par.Ne;        % ensemble size
+Nobs = Par.Nobs;     
+Ne = Par.Ne;        
 sd = Par.sd;
 range = Par.range;
 alpha = Par.alpha;
@@ -32,10 +32,10 @@ beta = sqrt(N_Iter);
 
 Cd = eye(Nobs);         
 for i = 1:Nobs
-    Cd(i,i) = sd(i)^2;  % covariance of the measurement errors   
+    Cd(i,i) = sd(i)^2;  
 end
 
-meanxf = repmat(mean(xf,2),1,Ne);           % mean of the prior parameters
+meanxf = repmat(mean(xf,2),1,Ne);           
 Cm = (xf - meanxf)*(xf - meanxf)'/(Ne - 1); % auto-covariance of the prior parameters
       
 J1 = nan(Ne,1);
@@ -43,7 +43,7 @@ for i = 1:Ne
     J1(i,1) = (yf(:,i)-obs)'/Cd*(yf(:,i)-obs);
 end
 
-xa = nan(size(xf));  % define the updated ensemble    
+xa = nan(size(xf));      
 for j = 1:Ne
     xa(:,j) = local_update(xf,yf,Cm,sd,range,obs,alpha,beta,J1,j);
 end
